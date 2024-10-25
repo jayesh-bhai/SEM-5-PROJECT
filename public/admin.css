@@ -1,0 +1,360 @@
+/* Admin Dashboard CSS */
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f5f5f5;
+    --text-color: #333;
+    --sidebar-width: 250px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: var(--primary-color);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.logo i {
+    margin-right: 10px;
+}
+
+.nav-menu ul {
+    list-style-type: none;
+}
+
+.nav-menu li {
+    margin-bottom: 15px;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.nav-menu a:hover {
+    opacity: 0.8;
+}
+
+.nav-menu i {
+    margin-right: 10px;
+    width: 20px;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius:5px;
+}
+
+.user-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.btn-logout {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+    background-color: #d32f2f;
+}
+
+.section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#start{
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+#initial-class h3{
+    margin-bottom: 15px;
+    color:black;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left : 940px;
+}
+
+.btn-primary:hover {
+    background-color: #3a7abd;
+}
+
+.form-container {
+    margin-top: 20px;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.btn-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+    background-color: #45a049;
+}
+
+.list-container {
+    margin-top: 20px;
+}
+
+.list-container > div {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* My Implemenattion */
+.working-area {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-height: 500px; /* Adjust as needed */
+}
+
+#student-form input,
+#student-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 40px; /* This ensures the dropdown is the same height as your text inputs */
+}
+
+.table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+#student-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#student-table th, #student-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#student-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#student-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#student-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+#classForm label{
+    display: block;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+b{
+    margin-left : 500px;
+}
+#initial-class form label {
+    color: black;
+}
+#initial-class form label button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left : 10px;
+}
+
+#initial-class form label select {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left : 10px;
+}
+
+.btn-delete {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-delete:hover {
+    background-color: darkred;
+  }
+  
+  .selected {
+    background-color: #f2f2f2;
+  }
+
+  /*faculty styling begins*/
+#faculty-form input,
+#faculty-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    height: 40px; /* This ensures the dropdown is the same height as your text inputs */
+}
+
+#faculty-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#faculty-table th, #faculty-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#faculty-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#faculty-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#faculty-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+#fetch-button{
+    margin : 50px 10px 10px 500px;
+
+}
+
+#messageBox {
+    margin-top: 20px;
+    width: 100%;
+    height: 200px;
+  }
+
+#send-msg{
+    background-color: #007bff;
+    color : white;
+    border-radius: 5px;
+    width : 100px;
+    height : 50px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.class-selection{
+    margin-top:20px;
+
+}
+.class-selection label{
+    font-size: 25px;
+    margin-top:20px;
+    
+}
+.class-resources{
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left : 10px;
+}
+
+.class-selection button{
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left : 10px;
+    
+}
+

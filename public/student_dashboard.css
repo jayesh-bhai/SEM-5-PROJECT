@@ -1,0 +1,169 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+    margin:10px 10px;
+    border-radius: 10px;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    font-size: 24px;
+    color:white;
+}
+
+.nav-link {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px 0;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar {
+    background-color: white;
+    padding: 15px 30px;
+    margin:10px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.user-name {
+    font-weight: bold;
+}
+
+.btn-logout {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 125px;
+}
+
+.btn-logout:hover {
+    background-color: #d32f2f;
+}
+
+.section {
+    display: none;
+    padding: 30px;
+}
+
+.section.active {
+    display: block;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+select, input[type="date"], button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.fetch-attendance {
+    width : 125px;
+    margin-left: 460px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #007bff;
+    color: white;
+}
+
+#resourcesList {
+    list-style-type: none;
+    margin-top: 20px;
+}
+
+#resourcesList li {
+    margin-bottom: 10px;
+}
+
+#announcementFeed {
+    margin-top: 20px;
+}
+
+.announcement {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.announcement h3 {
+    color: #007bff;
+    margin-bottom: 10px;
+}

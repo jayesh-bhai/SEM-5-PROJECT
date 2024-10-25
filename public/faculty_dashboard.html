@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="faculty_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <br>
+        <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>S.K.P Faculty</span>
+        </div>
+        <br>
+        <br>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#" onclick="showSection('attendancePage1')"><i class="fas fa-calendar-alt"></i> Attendance</a></li>
+                <br>
+                <li><a href="#" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                <br>
+                <li><a href="#" onclick="showSection('resourcesPage1')"><i class="fas fa-folder"></i> Resources</a></li>
+                <br>
+            </ul>
+        </nav>
+    </aside>
+
+    <header class="top-bar">
+        <div class="user-name"></div>
+        <button id="logout-btn" class="btn-logout">Logout</button>
+    </header>
+
+    <div class="main-content">
+        <div id="attendancePage1" class="section active">
+            <h2>Attendance - Class and Date Selection</h2>
+            <div class="form-group">
+                <label for="classSelect">Class:</label>
+                <select id="classSelect">
+                    <option value="">Select Class</option>
+                    <option value="Class 1">Class 1</option>
+                    <option value="Class 2">Class 2</option>
+                    <option value="Class 3">Class 3</option>
+                    <option value="Class 4">Class 4</option>
+                    <option value="Class 5">Class 5</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="attendanceDate">Date:</label>
+                <input type="date" id="attendanceDate">
+            </div>
+            <button onclick="goToAttendancePage2()">Submit</button>
+        </div>
+        
+        <div id="attendancePage2" class="section">
+            <h2>Attendance - Mark Attendance 
+                <a href="#" class="back-button" onclick="goToAttendancePage1()">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </h2>
+            <table id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>Sr.No</th>
+                        <th>Student Name</th>
+                        <th>Attendance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Students will be populated here -->
+                </tbody>
+            </table>
+            <button id="saveAttendanceBtn" onclick="saveAttendance()" class="save-att">Save Attendance</button>
+            <button id="reMarkBtn" onclick="showAttendanceCheckboxes()">Re-mark</button>
+        </div>
+
+        <!-- Announcements Section -->
+        <section id="announcements" class="section">
+            <h2>Announcements</h2>
+            <textarea id="announcement-text" placeholder="Enter announcement here..."></textarea>
+            <button onclick="postAnnouncement()">Post Announcement</button>
+            <div id="announcement-feed"></div>
+        </section>
+
+        <!-- Resources Page 1: Class Selection -->
+        <section id="resourcesPage1" class="section">
+            <h2>Select Class for Resource Upload</h2>
+            <div class="form-group">
+                <label for="resourceClassSelect">Class:</label>
+                <select id="resourceClassSelect">
+                    <option value="">Select Class</option>
+                    <option value="Class 1">Class 1</option>
+                    <option value="Class 2">Class 2</option>
+                    <option value="Class 3">Class 3</option>
+                    <option value="Class 4">Class 4</option>
+                    <option value="Class 5">Class 5</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                </select>
+            </div>
+            <button onclick="goToResourcePage2()">Submit</button>
+        </section>
+
+        <!-- Resources Page 2: File Upload -->
+        <section id="resourcesPage2" class="section">
+            <h2 id="selectedClassHeader">Resources for: <span id="selectedClass"></span></h2>
+            <div class="resource-upload">
+                <input type="file" id="fileUpload">
+                <button onclick="uploadResource()">Upload</button>
+            </div>
+            <div id="resourceUploadHistory">
+                <h3>Upload History</h3>
+                <ul id="resourceList"></ul>
+            </div>
+        </section>
+    </div>
+
+    <script src="faculty_dashboard.js"></script>
+</body>
+</html>
+
+
+
