@@ -3,31 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Contact Us</title>
-    <link rel="stylesheet" href="test.css">
+    <title>Resource Upload Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="contact-header">
-            <h1>Contact Us</h1>
-            <p>We would love to hear from you. Please fill out the form below.</p>
+    <h2>Resource Upload Test</h2>
+    <form id="uploadForm">
+        <div class="form-group">
+            <label for="classSelect">Select Class:</label>
+            <select id="classSelect" required>
+                <option value="">Select Class</option>
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+            </select>
         </div>
         
-        <div class="contact-form">
-            <form action="#" method="POST">
-                <label for="name">Full Name:</label>
-                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-
-                <label for="email">Email Address:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="5" placeholder="Write your message here" required></textarea>
-
-                <button type="submit">Send Message</button>
-            </form>
+        <div class="form-group">
+            <label for="resourceFile">Select Resource File:</label>
+            <input type="file" id="resourceFile" required>
         </div>
-    </div>
+
+        <button type="submit">Upload Resource</button>
+    </form>
+
+    <div id="message" class="message"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const classId = document.getElementById('classSelect').value;
+            const file = document.getElementById('resourceFile').files[0];
+            
+            if (!classId || !file) {
+                showMessage('Please select both class and file', false);
+                return;
+            }
+            
+            formData.append('classId', classId);
+            formData.append('resource', file);
+            
+            try {
+                const response = await fetch('http://localhost:7000/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('File uploaded successfully', true);
+                    document.getElementById('uploadForm').reset();
+                } else {
+                    showMessage(result.message || 'File not uploaded due to some error', false);
+                }
+            } catch (error) {
+                showMessage('File not uploaded due to some error', false);
+            }
+        });
+
+        function showMessage(text, isSuccess) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + (isSuccess ? 'success' : 'error');
+            messageDiv.style.display = 'block';
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
