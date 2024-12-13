@@ -149,44 +149,21 @@ function loadContent(sectionId) {
             break;
             case 'resources':
                 content = `
-                   <!-- Resources Page 1: Class Selection -->
-        <section id="resourcesPage1" class="section">
-            <h2>Select Class for Resource Upload</h2>
-            <div class="form-group">
-                <label for="resourceClassSelect">Class:</label>
-                <select id="resourceClassSelect">
-                    <option value="">Select Class</option>
-                    <option value="Class 1">Class 1</option>
-                    <option value="Class 2">Class 2</option>
-                    <option value="Class 3">Class 3</option>
-                    <option value="Class 4">Class 4</option>
-                    <option value="Class 5">Class 5</option>
-                    <option value="Class 6">Class 6</option>
-                    <option value="Class 7">Class 7</option>
-                    <option value="Class 8">Class 8</option>
-                    <option value="Class 9">Class 9</option>
-                    <option value="Class 10">Class 10</option>
-                    <option value="Class 11">Class 11</option>
-                    <option value="Class 12">Class 12</option>
-                </select>
-            </div>
-            <button onclick="goToResourcePage2()">Submit</button>
-        </section>
-
-        <!-- Resources Page 2: File Upload -->
-        <section id="resourcesPage2" class="section">
-            <h2 id="selectedClassHeader">Resources for: <span id="selectedClass"></span></h2>
-            <div class="resource-upload">
-                <input type="file" id="fileUpload">
-                <button onclick="uploadResource()">Upload</button>
-            </div>
-            <div id="resourceUploadHistory">
-                <h3>Upload History</h3>
-                <ul id="resourceList"></ul>
-            </div>
-        </section>
-                `;
-                break;
+                <h2>Resource Uploading</h2>
+                <form id="resource-upload-form" enctype="multipart/form-data">
+                    <label for="classDropdown">Select Class:</label>
+                    <select id="classDropdown" name="class">
+                        ${Array.from({ length: 12 }, (_, i) => `<option value="Class ${i + 1}">Class ${i + 1}</option>`).join('')}
+                    </select>
+                    <br><br>
+                    <label for="resourceFile">Choose Resource:</label>
+                    <input type="file" id="resourceFile" name="resource" required>
+                    <br><br>
+                    <button type="submit" id="uploadButton">Upload</button>
+                </form>
+                <p id="uploadStatus" style="color: green; display: none;"></p>
+            `;
+            break;
             
         case 'announcements':
             content = `
@@ -199,15 +176,15 @@ function loadContent(sectionId) {
             `;
             break;
             case 'email-messaging':
-    content = `
-        <h2>Email Messaging</h2>
-        <form id="emailForm">
-            <textarea id="messageBox" placeholder="Type your message here..." required></textarea>
-            <br><br>
-            <button type="submit" id="send-msg" >Send Message</button>
-            <p id="confirmationMessage" style="color: green; display: none;"></p>
-        </form>
-    `;
+                content = `
+                    <h2>Email Messaging</h2>
+                    <form id="emailForm">
+                        <textarea id="messageBox" placeholder="Type your message here..." required></textarea>
+                        <br><br>
+                        <button type="submit" id="send-msg" >Send Message</button>
+                        <p id="confirmationMessage" style="color: green; display: none;"></p>
+                    </form>
+                `;
     break;
         default:
             content = '<h2>Welcome to the Admin Dashboard</h2>';
@@ -217,6 +194,9 @@ function loadContent(sectionId) {
     setupEventListeners();
     if (sectionId === 'students') {
         updateStudentTable();
+    }
+    if (sectionId === 'resources') {
+        document.getElementById('resource-upload-form').addEventListener('submit', handleResourceUpload);
     }
 }
 
@@ -229,7 +209,6 @@ window.onload = function () {
         // If no name is found, redirect back to login (optional)
         window.location.href = '../index.html';
     }
-
 };
 
 // Logout logic: Clear session storage and redirect to login page
@@ -250,7 +229,6 @@ function setupEventListeners() {
     const addCourseForm = document.getElementById('add-course-form');
     const announcementForm = document.getElementById('announcement-form');
     const emailForm = document.getElementById('emailForm');
-    const resourceUploadForm = document.getElementById('resource-form');
 
     if (addStudentForm) {
         addStudentForm.addEventListener('submit', handleStudentSubmit);
@@ -267,15 +245,9 @@ function setupEventListeners() {
     if (emailForm) {
         emailForm.addEventListener('submit', handleEmailSubmit);
     }
-    if (resourceUploadForm) {
-        resourceUploadForm.addEventListener('submit', handleResourceSubmit);
-    }
-
     // Add this part for class selection handling
     const classSubmitButton = document.getElementById('class-submit');
     const classSelect = document.getElementById('class');
-    const assignmentButton = document.getElementById('assignment-button');
-    const studyMaterialButton = document.getElementById('study-material-button');
 
     if (classSubmitButton && classSelect) {
         classSubmitButton.addEventListener('click', () => {
@@ -283,96 +255,8 @@ function setupEventListeners() {
             handleClassSelection(selectedClass);
         });
     }
-
-    if (assignmentButton) {
-        assignmentButton.addEventListener('click', () => handleTypeSelection('assignment'));
-    }
-
-    if (studyMaterialButton) {
-        studyMaterialButton.addEventListener('click', () => handleTypeSelection('study_material'));
-    }
 }
-
-
-// Setup event listeners specific to resources
-function setupResourceListeners() {
-    const assignmentButton = document.getElementById('assignment-button');
-    const studyMaterialButton = document.getElementById('study-material-button');
-
-    if (assignmentButton) {
-        assignmentButton.addEventListener('click', () => handleTypeSelection('assignment'));
-    }
-
-    if (studyMaterialButton) {
-        studyMaterialButton.addEventListener('click', () => handleTypeSelection('study_material'));
-    }
-}
-
-function handleClassSelection(selectedClass) {
-    const resourceTypeSection = document.getElementById('resource-type-buttons');
-    const resourceUploadSection = document.getElementById('resource-upload');
-
-    if (selectedClass) {
-        // Show the resource type buttons (Assignments, Study Material)
-        resourceTypeSection.style.display = 'block';
-        resourceUploadSection.style.display = 'none';
-    } else {
-        // Hide resource type buttons if no class is selected
-        resourceTypeSection.style.display = 'none';
-        clearResourceSelection();
-    }
-}
-
-// Handle resource type selection
-function handleTypeSelection(type) {
-    const resourceType = document.getElementById('resource-type');
-    resourceType.value = type; // Update the hidden input for resource type
-    document.getElementById('resource-upload').style.display = 'block'; // Show upload section
-}
-
-// Event handler for resource upload
-function handleResourceSubmit(e) {
-    e.preventDefault();
-
-    const classSelect = document.getElementById('class');
-    const resourceType = document.getElementById('resource-type').value;
-    const resourceInput = document.getElementById('resource');
-    const file = resourceInput.files[0];
-
-    console.log("Form data before submission:", {
-        class: classSelect.value,
-        type: resourceType,
-        file: resourceInput.files[0]
-    });
-
-    if (!file) {
-        alert('Please select a file');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('resource', file);
-    formData.append('class', classSelect.value);
-    formData.append('type', resourceType);
-
-    fetch('/api/resources', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) throw new Error('Error uploading resource');
-        return response.json();
-    })
-    .then(data => {
-        alert('Resource uploaded successfully');
-    })
-    .catch(error => {
-        console.error(error);
-        alert('Error uploading resource');
-    });
-}
-
-
+//Email Messaging
 function handleEmailSubmit(e) {
     e.preventDefault();
 
@@ -409,6 +293,33 @@ function handleEmailSubmit(e) {
     });
 }
 
+//Resource Upload
+function handleResourceUpload(e) {
+    e.preventDefault();
+
+    const form = document.getElementById('resource-upload-form');
+    const formData = new FormData(form);
+    const uploadStatus = document.getElementById('uploadStatus');
+
+    fetch('/api/upload-resource', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                uploadStatus.textContent = 'Resource uploaded successfully!';
+                uploadStatus.style.display = 'block';
+                form.reset();
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during the upload. Please try again.');
+        });
+}
 
 // Event handlers
 function handleStudentSubmit(e) {

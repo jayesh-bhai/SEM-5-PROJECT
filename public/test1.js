@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+
     // Navigation functionality
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -9,37 +10,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Fetch resources
+    const fetchResourcesBtn = document.getElementById('fetchResourcesBtn');
+    fetchResourcesBtn.addEventListener('click', fetchResources);
 
     // Load initial announcements
     loadAnnouncements();
-
-    // Show attendance section by default
-    showSection('attendance');
 });
 
-// On page load, set the class dropdown to the student's class
+// On page load, display the student's name and set the class in the profile section
 window.onload = function() { 
     const studentName = sessionStorage.getItem('studentName');
     const studentClass = sessionStorage.getItem('studentClass');
-    
     if (studentName) {
         document.querySelector('.user-name').textContent = studentName;
     }
-    
     if (studentClass) {
-        // Set the class dropdown to the student's class and disable it
-        const classDropdown = document.getElementById('class');
-        classDropdown.innerHTML = `<option value="${studentClass}">${studentClass}</option>`;
-        classDropdown.value = studentClass;
-
-        // Fetch resources
-    const fetchResourcesBtn = document.getElementById('fetchResourcesBtn');
-    fetchResourcesBtn.addEventListener('click', () => fetchResources(studentClass));
-        
+        document.getElementById('classSelect').value = studentClass;
     }
-
-       // Ensure attendance section is shown
-       showSection('attendance');
 };
 
 // Logout logic: Clear session storage and redirect to login page
@@ -54,49 +42,11 @@ document.getElementById('logout-btn').addEventListener('click', () => {
     
 });
 
-// Fetch resources for the student's class
-function fetchResources(studentClass) {
-    if (!studentClass) {
-        alert('Unable to retrieve student class. Please login again.');
-        return;
-    }
-
-    const resourcesList = document.getElementById('resources-list');
-    resourcesList.innerHTML = 'Loading resources...'; //provide loading feedback
-
-    fetch(`/api/resources/${studentClass}`)
-        .then(response => response.json())
-        .then(resources => {
-            resourcesList.innerHTML = ''; // Clear previous resources
-
-            if (resources.length > 0) {
-                resources.forEach(resource => {
-                    const resourceItem = document.createElement('div');
-                    resourceItem.classList.add('resource-item');
-                    resourceItem.innerHTML = `
-                        <a href="/download-resource?filename=${encodeURIComponent(resource.file_name)}" download>
-                            ${resource.file_name}
-                        </a>
-                    `;
-                    resourcesList.appendChild(resourceItem);
-                });
-            } else {
-                resourcesList.innerHTML = 'No resources available for your class.';
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching resources:', error);
-            resourcesList.innerHTML = 'Failed to fetch resources. Please try again.';
-        });
-}
 
 function showSection(sectionId) {
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => section.classList.remove('active'));
-    const selectedSection = document.getElementById(sectionId);
-    if (selectedSection) {
-        selectedSection.classList.add('active');
-    }
+    document.getElementById(sectionId).classList.add('active');
 }
 
 function fetchAttendance() {
@@ -130,6 +80,28 @@ function fetchAttendance() {
             console.error('Error fetching attendance:', error);
             alert('Failed to fetch attendance. Please try again.');
         });
+}
+
+function fetchResources() {
+    const classSelected = document.getElementById('resourceClassSelect').value;
+
+    // Mock API call - replace with actual API call
+    setTimeout(() => {
+        const resourcesList = document.getElementById('resourcesList');
+        resourcesList.innerHTML = ''; // Clear previous entries
+
+        const resources = [
+            { name: 'Lecture 1: Introduction', link: '#' },
+            { name: 'Lecture 2: Advanced Topics', link: '#' },
+            { name: 'Assignment 1', link: '#' }
+        ];
+
+        resources.forEach(resource => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="${resource.link}" target="_blank">${resource.name}</a>`;
+            resourcesList.appendChild(li);
+        });
+    }, 500);
 }
 
 function loadAnnouncements() {

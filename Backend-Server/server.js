@@ -38,11 +38,16 @@ transporter.verify(function(error, success) {
     }
 });
 
-const storage = multer.memoryStorage();
-const upload = multer({
-    storage: multer.memoryStorage(),
-    limits: { fileSize: 10 * 1024 * 1024 } // 10 MB size limit
+// Create storage configuration for files
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, 'uploads')); // Files will be stored in 'uploads' folder
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + file.originalname.replace(/ /g, '_')); // Replace spaces with underscores
+    }
 });
+const upload = multer({ storage: storage });
 
 
 // Create MySQL connection pool
@@ -445,6 +450,61 @@ app.get('/api/student-attendance', async (req, res) => {
         res.status(500).json({ error: 'Error fetching attendance' });
     }
 });
+
+//resources uploading logic
+app.post('/api/upload-resource', upload.single('resource'), async (req, res) => {
+    const { class: selectedClass } = req.body;
+    const file = req.file;
+
+    if (!selectedClass || !file) {
+        return res.status(400).json({ success: false, message: 'Class or file is missing!' });
+    }
+
+    try {
+        const query = 'INSERT INTO resources (class, file_name, file_path) VALUES (?, ?, ?)';
+        await pool.execute(query, [selectedClass, file.filename, file.path]);
+        res.json({ success: true, message: 'Resource uploaded successfully!' });
+    } catch (error) {
+        console.error('Error uploading resource:', error);
+        res.status(500).json({ success: false, message: 'Database error occurred while saving the resource.' });
+    }
+});
+
+//resource fetching logic from students side
+// API endpoint to get resources by class
+app.get('/api/resources/:class', async (req, res) => {
+    const studentClass = req.params.class;
+
+    try {
+        const [rows] = await pool.execute(
+            'SELECT file_name, file_path FROM resources WHERE class = ?',
+            [studentClass]
+        );
+
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching resources:', error);
+        res.status(500).json({ error: 'Error fetching resources' });
+    }
+});
+
+// New route to handle resource downloads
+app.get('/download-resource', (req, res) => {
+    const filename = req.query.filename;
+    if (!filename) {
+        return res.status(400).send('Filename is required');
+    }
+
+    const filePath = path.join(__dirname, 'uploads', filename);
+    
+    res.download(filePath, (err) => {
+        if (err) {
+            console.error('Download error:', err);
+            res.status(404).send('File not found');
+        }
+    });
+});
+
 // Route to handle sending emails
 app.post('/api/send-email', async (req, res) => {
     const { message } = req.body;
@@ -482,71 +542,8 @@ app.post('/api/send-email', async (req, res) => {
     }
 });
 
-app.post('/api/resources', upload.single('resource'), (req, res) => {
-    console.log("Upload route hit");
-    console.log(req.file); // Log the uploaded file details
-    console.log(req.body); // Log the form data
-    const { class: className, type } = req.body;
-    const file = req.file;
 
-    if (!file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-    }
-
-    console.log('File buffer length:', file.buffer.length);
-    console.log('Inserting into DB:', { className, type, fileName: file.originalname, fileSize: file.size, fileType: file.mimetype });
-
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error('Database connection error:', err);
-            return res.status(500).json({ error: 'Error connecting to database' });
-        }
-
-        const query = 'INSERT INTO resources (class, type, file_name, file_data, file_mimetype) VALUES (?, ?, ?, ?, ?)';
-        connection.query(query, [className, type, file.originalname, file.buffer, file.mimetype], (err, result) => {
-            connection.release(); // Always release the connection back to the pool
-
-            if (err) {
-                console.error('Database query error:', err.message); // More descriptive error logging
-                return res.status(500).json({ error: 'Error uploading resource' });
-            }
-
-            res.status(201).json({ 
-                message: 'Resource uploaded successfully',
-                resourceId: result.insertId
-            });
-        });
-    });
-});
-
-
-// Get Resources with database connection using pool
-app.get('/api/resources', (req, res) => {
-    const { class: className, type } = req.query;
-    const query = 'SELECT * FROM resources WHERE class = ? AND type = ?';
-
-    // Obtain a connection from the pool
-    pool.getConnection((err, connection) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Error connecting to database');
-        }
-
-        // Execute the query using the connection
-        connection.query(query, [className, type], (err, results) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send('Error fetching resources');
-            }
-
-            // Release the connection back to the pool
-            connection.release();
-
-            res.json(results);
-        });
-    });
-});
-app.listen(port, () => {
+app.listen(port, '0.0.0.0',() => {
     console.log(`Server running on port ${port}`);
     console.log('MySQL Database Connected')
 });

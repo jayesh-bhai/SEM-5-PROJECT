@@ -203,44 +203,8 @@ function postAnnouncement() {
   }
 }
 
-// Navigate to Resource Page 2
-function goToResourcePage2() {
-  const classSelected = document.getElementById('resourceClassSelect').value;
-  if (classSelected !== '') {
-      document.getElementById('selectedClass').textContent = classSelected;
-      showSection('resourcesPage2');  // Show the file upload page
-  } else {
-      alert('Please select a class.');
-  }
-}
+//Resources Uploading
 
-// File upload and displaying history with timestamp
-function uploadResource() {
-  const fileInput = document.getElementById('fileUpload');
-  const file = fileInput.files[0];
-
-  if (file) {
-      const uploadTime = new Date().toLocaleString();
-      const fileName = file.name;
-
-      // Add file details to the resource history list
-      const resourceList = document.getElementById('resourceList');
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `<a href="#" onclick="openFile('${fileName}')">${fileName}</a> - <em>${uploadTime}</em>`;
-      resourceList.appendChild(listItem);
-
-      // Clear the file input after upload
-      fileInput.value = '';
-      alert('File uploaded successfully!');
-  } else {
-      alert('Please select a file to upload.');
-  }
-}
-
-// Simulate file opening (you could link to actual file)
-function openFile(fileName) {
-  alert(`Opening ${fileName}`);
-}
 
 // Initialize default section to Attendance Page 1
 document.addEventListener('DOMContentLoaded', () => {
