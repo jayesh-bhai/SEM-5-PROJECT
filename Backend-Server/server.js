@@ -505,6 +505,67 @@ app.get('/download-resource', (req, res) => {
     });
 });
 
+// Get all resources by class
+app.get('/api/resources/:class', async (req, res) => {
+    let selectedClass = req.params.class;
+
+    if (!selectedClass) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Class is missing!' 
+        });
+    }
+
+    // Trim and normalize the class
+    selectedClass = selectedClass.trim();
+
+    try {
+        const [rows] = await pool.execute(
+            'SELECT file_name, file_path FROM resources WHERE LOWER(class) = LOWER(?)',
+            [selectedClass]
+        );
+
+        // Explicit logging for debugging
+        console.log(`Resources for ${selectedClass}:`, rows);
+
+        // Always return a success response
+        return res.json(rows);
+
+    } catch (error) {
+        console.error('Error fetching resources:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to fetch resources.',
+            error: error.message 
+        });
+    }
+});
+
+
+// Delete a resource by ID
+app.delete('/api/resource/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ success: false, message: 'Resource ID is missing!' });
+    }
+
+    try {
+        // Delete the resource from the database
+        const [result] = await pool.execute('DELETE FROM resources WHERE id = ?', [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Resource not found!' });
+        }
+
+        res.json({ success: true, message: 'Resource deleted successfully!' });
+    } catch (error) {
+        console.error('Error deleting resource:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete resource.' });
+    }
+});
+
+
 // Route to handle sending emails
 app.post('/api/send-email', async (req, res) => {
     const { message } = req.body;

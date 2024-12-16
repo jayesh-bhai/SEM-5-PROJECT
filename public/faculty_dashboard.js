@@ -204,14 +204,138 @@ function postAnnouncement() {
 }
 
 //Resources Uploading
-
-
-// Initialize default section to Attendance Page 1
 document.addEventListener('DOMContentLoaded', () => {
-  showSection('attendancePage1');
+    const resourceForm = document.getElementById('faculty-resource-upload-form');
+    const allResourcesButton = document.getElementById('facultyAllResourcesButton');
+    const classSelect = document.getElementById('facultyClassSelect');
+    const resourcesList = document.getElementById('facultyResourcesList');
+
+    if (resourceForm) {
+        resourceForm.addEventListener('submit', handleFacultyResourceUpload);
+    }
+
+    if (classSelect) {
+        classSelect.addEventListener('change', () => {
+            allResourcesButton.disabled = !classSelect.value;
+            resourcesList.innerHTML = ''; // Clear previous resources
+        });
+    }
+
+    if (allResourcesButton) {
+        allResourcesButton.addEventListener('click', handleFacultyAllResources);
+    }
+
+    function handleFacultyAllResources() {
+        const selectedClass = document.getElementById('facultyClassSelect').value;
+    
+        if (!selectedClass) {
+            alert('Please select a class first.');
+            return;
+        }
+    
+        // Clear previous content and show loading
+        const resourcesList = document.getElementById('facultyResourcesList');
+        resourcesList.innerHTML = '<p>Loading resources...</p>';
+    
+        // Add console logs for debugging
+        console.log('Fetching resources for class:', selectedClass);
+    
+        fetch(`/api/resources/${selectedClass}`)
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Received data:', data);
+                
+                if (Array.isArray(data)) {
+                    // If the response is directly an array of resources
+                    if (data.length > 0) {
+                        displayFacultyResources(data);
+                    } else {
+                        resourcesList.innerHTML = '<p>No resources found for this class.</p>';
+                    }
+                } else if (data.success && data.resources) {
+                    // If the response follows the expected format
+                    if (data.resources.length > 0) {
+                        displayFacultyResources(data.resources);
+                    } else {
+                        resourcesList.innerHTML = '<p>No resources found for this class.</p>';
+                    }
+                } else {
+                    resourcesList.innerHTML = '<p>Unable to fetch resources.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching resources:', error);
+                resourcesList.innerHTML = '<p>Failed to fetch resources. Please try again.</p>';
+            });
+    }
+
+    function displayFacultyResources(resources) {
+        const resourcesList = document.getElementById('facultyResourcesList');
+        resourcesList.innerHTML = '';
+    
+        if (!resources || resources.length === 0) {
+            resourcesList.innerHTML = '<p>No resources found for this class.</p>';
+            return;
+        }
+    
+        const table = document.createElement('table');
+        table.classList.add('resources-table'); // Add a class for styling if needed
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>File Path</th>
+                </tr>
+            </thead>
+            <tbody>
+            ${resources.map(resource => `
+                <tr>
+                    <td>${resource.file_name}</td>
+                    <td>${resource.file_path}</td>
+                </tr>
+            `).join('')}
+        </tbody>
+        `;
+        resourcesList.appendChild(table);
+    }
 });
 
+function handleFacultyResourceUpload(e) {
+    e.preventDefault();
 
+    const form = document.getElementById('faculty-resource-upload-form');
+    const formData = new FormData(form);
+    const uploadStatus = document.getElementById('facultyUploadStatus');
 
-
+    fetch('/api/upload-resource', {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                uploadStatus.textContent = 'Resource uploaded successfully!';
+                uploadStatus.style.display = 'block';
+                form.reset();
+              
+                // Added code to hide the message after 5 seconds
+                setTimeout(() => {
+                  uploadStatus.textContent = '';  // Clear the content
+                  uploadStatus.style.display = 'none'; // Hide the element
+                }, 5000); // Delay of 5 seconds (5000 milliseconds)
+              }else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred during the upload. Please try again.');
+        });
+}
 
