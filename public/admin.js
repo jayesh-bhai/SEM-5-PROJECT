@@ -321,6 +321,7 @@ function handleResourceUpload(e) {
         });
 }
 
+
 // Event handlers
 function handleStudentSubmit(e) {
     e.preventDefault();

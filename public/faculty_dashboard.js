@@ -290,20 +290,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>File Path</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
             ${resources.map(resource => `
                 <tr>
                     <td>${resource.file_name}</td>
-                    <td>${resource.file_path}</td>
+                    <td>${resource.uploaded_at || 'N/A'}</td>
                 </tr>
             `).join('')}
-        </tbody>
+            </tbody>
         `;
         resourcesList.appendChild(table);
     }
+    
 });
 
 function handleFacultyResourceUpload(e) {

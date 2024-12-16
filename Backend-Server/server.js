@@ -472,7 +472,7 @@ app.post('/api/upload-resource', upload.single('resource'), async (req, res) => 
 
 //resource fetching logic from students side
 // API endpoint to get resources by class
-app.get('/api/resources/:class', async (req, res) => {
+app.get('/api/resourcess/:class', async (req, res) => {
     const studentClass = req.params.class;
 
     try {
@@ -505,15 +505,12 @@ app.get('/download-resource', (req, res) => {
     });
 });
 
-// Get all resources by class
+//Fetch all resources for a specific class
 app.get('/api/resources/:class', async (req, res) => {
     let selectedClass = req.params.class;
 
     if (!selectedClass) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Class is missing!' 
-        });
+        return res.status(400).json({ success: false, message: 'Class is missing!' });
     }
 
     // Trim and normalize the class
@@ -521,25 +518,23 @@ app.get('/api/resources/:class', async (req, res) => {
 
     try {
         const [rows] = await pool.execute(
-            'SELECT file_name, file_path FROM resources WHERE LOWER(class) = LOWER(?)',
+            `SELECT file_name, 
+            DATE_FORMAT(uploaded_at, '%Y-%m-%d %H:%i:%s') AS uploaded_at 
+            FROM resources WHERE LOWER(class) = LOWER(?)`,
             [selectedClass]
         );
 
-        // Explicit logging for debugging
-        console.log(`Resources for ${selectedClass}:`, rows);
+        // Debugging: Log the rows returned by the database query
+        console.log(`Resources fetched for class ${selectedClass}:`, rows);
 
-        // Always return a success response
-        return res.json(rows);
+        res.json(rows);
 
     } catch (error) {
         console.error('Error fetching resources:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Failed to fetch resources.',
-            error: error.message 
-        });
+        res.status(500).json({ success: false, message: 'Failed to fetch resources.' });
     }
 });
+
 
 
 // Delete a resource by ID

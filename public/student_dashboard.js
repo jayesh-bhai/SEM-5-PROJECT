@@ -64,7 +64,7 @@ function fetchResources(studentClass) {
     const resourcesList = document.getElementById('resources-list');
     resourcesList.innerHTML = 'Loading resources...'; //provide loading feedback
 
-    fetch(`/api/resources/${studentClass}`)
+    fetch(`/api/resourcess/${studentClass}`)
         .then(response => response.json())
         .then(resources => {
             resourcesList.innerHTML = ''; // Clear previous resources
