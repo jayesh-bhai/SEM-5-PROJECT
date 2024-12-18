@@ -1,4 +1,5 @@
 let attendanceStates = []; // Array to store attendance states
+let resourcesList = document.getElementById('facultyResourcesList');
 
 // Function to switch sections
 function showSection(section) {
@@ -208,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const resourceForm = document.getElementById('faculty-resource-upload-form');
     const allResourcesButton = document.getElementById('facultyAllResourcesButton');
     const classSelect = document.getElementById('facultyClassSelect');
-    const resourcesList = document.getElementById('facultyResourcesList');
 
     if (resourceForm) {
         resourceForm.addEventListener('submit', handleFacultyResourceUpload);
@@ -233,8 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
     
-        // Clear previous content and show loading
-        const resourcesList = document.getElementById('facultyResourcesList');
+        // Clear previous content and show loading message
         resourcesList.innerHTML = '<p>Loading resources...</p>';
     
         // Add console logs for debugging
@@ -275,35 +274,114 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    function displayFacultyResources(resources) {
-        const resourcesList = document.getElementById('facultyResourcesList');
-        resourcesList.innerHTML = '';
-    
-        if (!resources || resources.length === 0) {
-            resourcesList.innerHTML = '<p>No resources found for this class.</p>';
-            return;
-        }
-    
-        const table = document.createElement('table');
-        table.classList.add('resources-table'); // Add a class for styling if needed
-        table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>File Name</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-            ${resources.map(resource => `
-                <tr>
+// Create the delete button only once
+let selectedResourceId = null;
+let deleteButton = document.getElementById('deleteResourceButton');
+
+if (!deleteButton) {
+    deleteButton = document.createElement('button');
+    deleteButton.id = 'deleteResourceButton';
+    deleteButton.textContent = 'Delete Resource';
+    deleteButton.style.display = 'none'; // Initially hidden
+    deleteButton.addEventListener('click', handleDeleteResource);
+    // Append the delete button to the section where the resources are displayed
+    document.getElementById('resourcesPage1').appendChild(deleteButton);
+}
+
+function displayFacultyResources(resources) {
+    selectedResourceId = null; // Reset selection
+    deleteButton.style.display = 'none'; // Hide delete button initially
+    resourcesList.innerHTML = '';
+
+    if (!resources || resources.length === 0) {
+        resourcesList.innerHTML = '<p>No resources found for this class.</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.classList.add('resources-table'); 
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Date</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${resources
+                .map(
+                    (resource) => `
+                <tr data-id="${resource.id}">
                     <td>${resource.file_name}</td>
                     <td>${resource.uploaded_at || 'N/A'}</td>
+                    <td><input type="checkbox" disabled class="resource-checkbox"></td>
                 </tr>
-            `).join('')}
-            </tbody>
-        `;
-        resourcesList.appendChild(table);
+            `
+                )
+                .join('')}
+        </tbody>
+    `;
+    resourcesList.appendChild(table);
+
+    // Add event listeners for row selection via double-click
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach((row) => {
+        row.addEventListener('dblclick', () => handleRowSelection(row));
+    });
+}
+
+// Handle resource row selection (allow deselection on double-click)
+function handleRowSelection(row) {
+    const checkbox = row.querySelector('.resource-checkbox');
+    const rowSelected = checkbox.checked;
+
+    if (rowSelected) {
+        checkbox.checked = false;
+        selectedResourceId = null;
+        deleteButton.style.display = 'none'; // Hide delete button
+    } else {
+        const allCheckboxes = document.querySelectorAll('.resource-checkbox');
+        allCheckboxes.forEach((cb) => (cb.checked = false)); // Deselect others
+
+        checkbox.checked = true;
+        selectedResourceId = row.dataset.id;
+        console.log('Selected Resource ID:', selectedResourceId); // Debugging
+        deleteButton.style.display = 'inline-block'; // Show delete button
     }
+}
+
+function handleDeleteResource() {
+    if (!selectedResourceId) {
+        alert('No resource selected for deletion.');
+        return;
+    }
+
+    // Confirmation prompt
+    const confirmDelete = confirm('Are you sure you want to delete this resource?');
+    if (!confirmDelete) return;
+
+    fetch(`/api/resource/${selectedResourceId}`, {
+        method: 'DELETE',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert('Resource deleted successfully!');
+                deleteButton.style.display = 'none'; // Hide delete button
+                selectedResourceId = null;
+                // Refresh the list of resources
+                document.getElementById('facultyAllResourcesButton').click();
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch((error) => {
+            console.error('Error deleting resource:', error);
+            alert('Failed to delete resource. Please try again.');
+        });
+}
+
     
 });
 

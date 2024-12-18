@@ -518,7 +518,7 @@ app.get('/api/resources/:class', async (req, res) => {
 
     try {
         const [rows] = await pool.execute(
-            `SELECT file_name, 
+            `SELECT id,file_name, 
             DATE_FORMAT(uploaded_at, '%Y-%m-%d %H:%i:%s') AS uploaded_at 
             FROM resources WHERE LOWER(class) = LOWER(?)`,
             [selectedClass]
