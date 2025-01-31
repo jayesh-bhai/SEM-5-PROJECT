@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitCode.addEventListener('click', () => {
         const code = codeInput.value;
         if (code) {
-            fetch('http://localhost:3000/verify-code', {
+            fetch('/verify-code', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : currentUserType === 'Faculty' ? '/faculty-login' 
                     : '/admin-login';  // Added admin login endpoint
     
-    fetch(`http://localhost:3000${endpoint}`, {
+    fetch(`${endpoint}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ function handleSuccessfulLogin(data) {
             ? { name, gender, email, password }
             : { name, gender, email, password };
 
-        fetch(`http://localhost:3000${endpoint}`, {
+        fetch(`${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

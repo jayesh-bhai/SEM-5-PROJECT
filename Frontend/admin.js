@@ -418,7 +418,7 @@ function deleteSelectedStudents() {
     const confirmation = confirm('Are you sure? The selected students will be deleted permanently.');
 
     if (confirmation) {
-        fetch('http://localhost:3000/api/students', {
+        fetch('/api/students', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -489,7 +489,7 @@ function updateFacultyTable() {
 }
 
 function getAllFaculty() {
-    fetch('http://localhost:3000/api/faculty')
+    fetch('/api/faculty')
         .then(response => response.json())
         .then(data => {
             faculty = data; // Store the fetched faculty data
@@ -535,7 +535,7 @@ function deleteSelectedFaculty() {
     const confirmation = confirm('Are you sure? The selected faculties will be deleted permanently.');
 
     if (confirmation) {
-        fetch('http://localhost:3000/api/faculty', {
+        fetch('/api/faculty', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -625,7 +625,7 @@ function confirmClass() {
 
 //api calls for students
 function addStudent(name, stu_class, gender, email) {
-    fetch('http://localhost:3000/api/students', {
+    fetch('/api/students', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -645,7 +645,7 @@ function addStudent(name, stu_class, gender, email) {
 }
 
 function getStudentsByClass(stu_class) {
-    fetch(`http://localhost:3000/api/students/${stu_class}`)
+    fetch(`/api/students/${stu_class}`)
         .then(response => response.json())
         .then(data => {
             students = data; // Update the global students array
@@ -659,7 +659,7 @@ function getStudentsByClass(stu_class) {
 
 //api calls for faculty
 function addFaculty(name, gender, email) {
-    fetch('http://localhost:3000/api/faculty', {
+    fetch('/api/faculty', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
